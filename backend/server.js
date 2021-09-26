@@ -5,6 +5,7 @@ const app = express()
 app.get('/api/products', (req, res) => {
   res.send(data.products)
 })
+
 app.get('/', (req, res) => {
   res.send('서버가 준비중이다')
 })
