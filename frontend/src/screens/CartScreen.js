@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { addToCart } from '../actions/cartActions'
+import { addToCart, removeFromCart } from '../actions/cartActions'
 import MessageBox from '../components/MessageBox'
 
 const CartScreen = (props) => {
@@ -17,8 +17,7 @@ const CartScreen = (props) => {
   }, [dispatch, productId, qty]) // [dispatch, productId, qty]가 바뀌면 콜백함수 실행
 
   const removeFromCartHandler = (id) => {
-    // 삭제 action
-    console.log('삭제버튼')
+    dispatch(removeFromCart(id))
   }
   const checkoutHandler = () => {
     props.history.push('/signin?redirect=shipping')
@@ -27,7 +26,7 @@ const CartScreen = (props) => {
   return (
     <div className='row top'>
       <div className='col-2'>
-        <h1>Shopping Cart</h1>
+        <h1>장바구니</h1>
         {cartItems.length === 0 ? (
           <MessageBox>
             장바구니가 비어있습니다. <Link to='/'>상점으로 가기</Link>
@@ -40,6 +39,27 @@ const CartScreen = (props) => {
                   <div>
                     <img src={item.image} alt={item.name} className='small'></img>
                   </div>
+                  <div className='min-30'>
+                    <Link to={`/product/${item.product}`}>{item.name}</Link>
+                  </div>
+                  <div>
+                    <select
+                      value={item.qty}
+                      onChange={(e) => dispatch(addToCart(item.product, Number(e.target.value)))}
+                    >
+                      {[...Array(item.countInStock).keys()].map((x) => (
+                        <option key={x + 1} value={x + 1}>
+                          {x + 1}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>{item.price} 원</div>
+                  <div>
+                    <button type='button' onClick={() => removeFromCartHandler(item.product)}>
+                      삭제
+                    </button>
+                  </div>
                 </div>
               </li>
             ))}
@@ -51,7 +71,7 @@ const CartScreen = (props) => {
           <ul>
             <li>
               <h2>
-                서브합계 ({cartItems.reduce((a, c) => a + c.qty, 0)} 개) :
+                부분합계 ({cartItems.reduce((a, c) => a + c.qty, 0)} 개) :
                 {cartItems.reduce((a, c) => a + c.price * c.qty, 0)} 원
               </h2>
             </li>
