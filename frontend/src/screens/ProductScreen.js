@@ -7,7 +7,7 @@ import MessageBox from '../components/MessageBox'
 import Rating from '../components/Rating'
 
 export default function ProductScreen(props) {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch() // action을 실어보내기 위한 hook
   const [qty, setQty] = useState(1)
   const productId = props.match.params.id
   const productDetails = useSelector((state) => state.productDetails)
