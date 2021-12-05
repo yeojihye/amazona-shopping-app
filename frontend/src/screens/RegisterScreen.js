@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { signin } from '../actions/userActions'
+import { register } from '../actions/userActions'
 import LoadingBox from '../components/LoadingBox'
 import MessageBox from '../components/MessageBox'
 
-export default function SigninScreen(props) {
+export default function RegisterScreen(props) {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const redirect = props.location.search ? props.location.search.split('=')[1] : '/'
 
-  const userSignin = useSelector((state) => state.userSignin)
-  const { userInfo, loading, error } = userSignin
+  const userRegister = useSelector((state) => state.userRegister)
+  const { userInfo, loading, error } = userRegister
 
   const dispatch = useDispatch()
   const submitHandler = (e) => {
     e.preventDefault()
-    dispatch(signin(email, password))
+    if (password !== confirmPassword) {
+      alert('비밀번호가 일치하지 않습니다.')
+    } else {
+      dispatch(register(name, email, password))
+    }
   }
   useEffect(() => {
     if (userInfo) {
@@ -28,10 +34,19 @@ export default function SigninScreen(props) {
     <div>
       <form className='form' onSubmit={submitHandler}>
         <div>
-          <h1>로그인</h1>
+          <h1>계정 생성</h1>
         </div>
         {loading && <LoadingBox></LoadingBox>}
         {error && <MessageBox variant='danger'>{error}</MessageBox>}
+        <div>
+          <label htmlFor='name'>이름</label>
+          <input
+            type='text'
+            placeholder='이름을 입력하세요'
+            required
+            onChange={(e) => setName(e.target.value)}
+          ></input>
+        </div>
         <div>
           <label htmlFor='email'>이메일 주소</label>
           <input
@@ -53,15 +68,25 @@ export default function SigninScreen(props) {
           ></input>
         </div>
         <div>
+          <label htmlFor='password'>비밀번호 확인</label>
+          <input
+            type='password'
+            id='confirmPassword'
+            placeholder='비밀번호 확인을 입력하세요'
+            required
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          ></input>
+        </div>
+        <div>
           <label />
           <button className='primary' type='submit'>
-            Sign In
+            회원가입
           </button>
         </div>
         <div>
           <label />
           <div>
-            새로운 고객이신가요? <Link to={`/register?redirect=${redirect}`}>계정 생성</Link>
+            이미 계정이 있으신가요? <Link to={`/signin?redirect=${redirect}`}>로그인</Link>
           </div>
         </div>
       </form>

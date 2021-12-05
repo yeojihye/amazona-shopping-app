@@ -10,7 +10,7 @@ const userRouter = express.Router()
 userRouter.get(
   '/seed',
   expressAsyncHandler(async (req, res) => {
-    // await User.remove({})
+    await User.remove({})
     const createdUsers = await User.insertMany(data.users) // jpaRepository.save()
     res.send({ createdUsers })
   })
@@ -33,6 +33,25 @@ userRouter.post(
       }
     }
     res.status(401).send({ message: '유효하지 않은 이메일 또는 비밀번호입니다.' })
+  })
+)
+
+userRouter.post(
+  '/register',
+  expressAsyncHandler(async (req, res) => {
+    const user = new User({
+      name: req.body.name,
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8),
+    })
+    const createdUser = await user.save()
+    res.send({
+      _id: createdUser._id,
+      name: createdUser.name,
+      email: createdUser.email,
+      isAdmin: createdUser.isAdmin,
+      token: generateToken(createdUser),
+    })
   })
 )
 
