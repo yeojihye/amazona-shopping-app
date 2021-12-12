@@ -22,7 +22,7 @@ const PaymentMethodScreen = (props) => {
       <CheckoutSteps step1 step2 step3></CheckoutSteps>
       <form className='form' onSubmit={submitHandler}>
         <div>
-          <h1>결재</h1>
+          <h1>결제</h1>
         </div>
         <div>
           <div>
